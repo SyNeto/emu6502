@@ -107,6 +107,8 @@ int main()
   Mem mem;
   CPU cpu;
   cpu.reset(mem);
+  mem[0xFFFC] = CPU::INS_LDA_IM;
+  mem[0xFFFD] = 0x42;
   cpu.execute(2, mem);
   return 0;
 }
