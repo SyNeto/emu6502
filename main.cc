@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-/* 
-	Author: Ernesto Jimenez V.
+/*
+  Author: Ernesto Jimenez V.
   Email: ernjivi@gmail.com
 
   Based on the work of Dave Poo
@@ -32,6 +32,11 @@ struct Mem
   {
     return Data[address];
   }
+
+  Byte& operator[](u32 address)
+  {
+    return Data[address];
+  }
 };
 
 struct CPU
@@ -50,6 +55,10 @@ struct CPU
   Byte B : 1;
   Byte V : 1;
   Byte N : 1;
+
+  // Instruction codes
+  static constexpr Byte
+    INS_LDA_IM = 0xA9;
 
   void reset(Mem& memory)
   {
@@ -72,8 +81,21 @@ struct CPU
   {
     while(cycles > 0)
     {
-      Byte Ins = fetchByte(cycles, memory);
-      (void)Ins;
+      Byte ins = fetchByte(cycles, memory);
+      switch(ins)
+      {
+        case INS_LDA_IM:
+        {
+          Byte value = fetchByte(cycles, memory);
+          A = value;
+          Z = (A == 0);
+          N = (A & 0x80) > 0;
+        } break;
+        default:
+        {
+          printf("Instruction not handled %d", ins);
+        } break;
+      }
     }
   }
 };
